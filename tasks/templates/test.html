@@ -1,13 +1,22 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
-    
-    <img src="{% static "images/logo.webp" %}" alt="">
-</body>
+    <link rel="stylesheet" href="{% static "css/output.css" %}">
+  </head>
+  <body>
+    <div class="mt-4">
+      {% for name in names %}
+      {% if not name == "Sakib" %}
+        <p class="bg-green-600 text-white m-2 inline p-2 rounded-xl border border-black">
+            {{ name }}
+        </p>
+        {% endif %}
+      {% endfor %}
+    </div>
+     {% comment %} <img src="{% static "images/logo.webp" %}" alt="">  {% endcomment %}
+  </body>
 </html>
