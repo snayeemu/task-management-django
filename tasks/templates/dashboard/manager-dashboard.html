@@ -1,119 +1,106 @@
-{% extends "dashboard/dashboard.html" %}
-{% block title %}Manager-Dashboard{% endblock title %}
-
+{% extends 'dashboard/dashboard.html' %}
+{% block title %}
+  Manager-Dashboard
+{% endblock %}
 {% block tasks %}
-
-<div class="bg-white rounded-xl shadow-sm">
-  <div
-    class="grid grid-cols-4 p-4 border-b border-gray-100 text-sm text-gray-500"
-  >
-    <div>TASK TITLE</div>
-    <div>PRIORITY</div>
-    <div>TEAM</div>
-    <div>CREATED AT</div>
-  </div>
-  <!-- Task Items  -->
-  <div class="divide-y divide-gray-100">
-    <!-- Task 1 -->
-    <div class="grid grid-cols-4 gap-4 p-4 items-center">
-      <div class="flex items-center gap-2">
-        <div class="w-2 h-2 rounded-full bg-green-500"></div>
-        <span>Test Low Task</span>
-      </div>
-      <div>
-        <span
-          class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm"
-          >Low</span
-        >
-      </div>
-      <div class="flex -space-x-2">
-        <div
-          class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white"
-        >
-          CA
-        </div>
-        <div
-          class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white"
-        >
-          JS
-        </div>
-        <div
-          class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white"
-        >
-          B
-        </div>
-      </div>
-      <div class="text-gray-500">9 months ago</div>
+  <div class="bg-white rounded-xl shadow-sm">
+    <div class="grid grid-cols-4 p-4 border-b border-gray-100 text-sm text-gray-500">
+      <div>TASK TITLE</div>
+      <div>PRIORITY</div>
+      <div>TEAM</div> 
+      <div>CREATED AT</div>
     </div>
+    <!-- Task Items -->
+    <div class="divide-y divide-gray-100">
+      {% for task in tasks %}
+        {% if task.details.priority.upper == 'M' %}
+          <!-- Task 2 -->
+          <div class="grid grid-cols-4 gap-4 p-4 items-center">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+              <span>{{task.title}}</span>
+              <a href="{% url 'update-task' task.id %}" type="submit" class="p-1 rounded-full bg-green-600 text-white text-sm">Edit</a>
+              <form action="{% url "delete-task" task.id %}" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" class="p-1 rounded-full bg-red-600 text-white text-sm">Delete</button>
+                </form>
+            </div>
+            <div>
+              <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm">Normal</span>
+            </div>
+            <div class="flex -space-x-2">
+              {% for emp  in task.employees.all %}
+                <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white">
+                  {% if emp.name|length > 2 %}
+                      {{emp.name|slice:2}}
+                    {% else %}
+                      {{emp.name}}
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+            <div class="text-gray-500">{{task.created_at|timesince}}</div>
+          </div>
+        {% elif task.details.priority.upper == 'H' %}
+          <!-- Task 3 -->
+          <div class="grid grid-cols-4 gap-4 p-4 items-center">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-orange-500"></div>
+              <span>{{task.title}}</span>
+              <a href="{% url 'update-task' task.id %}" type="submit" class="p-1 rounded-full bg-green-600 text-white text-sm">Edit</a>
+              <form action="{% url "delete-task" task.id %}" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" class="p-1 rounded-full bg-red-600 text-white text-sm">Delete</button>
+                </form>
+            </div>
+            <div>
+              <span class="px-3 py-1 rounded-full bg-red-50 text-red-600 text-sm">High</span>
+            </div>
+            <div class="flex -space-x-2">
+              {% for emp  in task.employees.all %}
+                <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white">
+                  {% if emp.name|length > 2 %}
+                      {{emp.name|slice:2}}
+                    {% else %}
+                      {{emp.name}} 
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+            <div class="text-gray-500">{{task.created_at|timesince}}</div>
+          </div>
+          {% else %}
+          <!-- Task 1 -->
+          <div class="grid grid-cols-4 gap-4 p-4 items-center">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-green-500"></div>
+              <span>{{task.title}}</span>
+              <a href="{% url 'update-task' task.id %}" type="submit" class="p-1 rounded-full bg-green-600 text-white text-sm">Edit</a>
+              <form action="{% url "delete-task" task.id %}" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" class="p-1 rounded-full bg-red-600 text-white text-sm">Delete</button>
+                </form>
+            </div>
+            <div>
+              <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm">Low</span>
+            </div>
+            <div class="flex -space-x-2">
+              {% for emp in task.employees.all %}
+                <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white">
+                  {% if emp.name|length > 2 %}
+                      {{emp.name|slice:2}}
+                    {% else %}
+                      {{emp.name}}
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+            <div class="text-gray-500">{{task.created_at|timesince}}</div>
+          </div>
+        {% endif %}
+      {% endfor %} {% comment %}
 
-    <!-- Task 2 -->
-    <div class="grid grid-cols-4 gap-4 p-4 items-center">
-      <div class="flex items-center gap-2">
-        <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
-        <span>Test task</span>
-      </div>
-      <div>
-        <span
-          class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm"
-          >Normal</span
-        >
-      </div>
-      <div class="flex -space-x-2">
-        <div
-          class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white"
-        >
-          AJ
-        </div>
-        <div
-          class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white"
-        >
-          EV
-        </div>
-        <div
-          class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white"
-        >
-          B
-        </div>
-      </div>
-      <div class="text-gray-500">9 months ago</div>
-    </div>
-
-    <!-- Task 3 -->
-    <div class="grid grid-cols-4 gap-4 p-4 items-center">
-      <div class="flex items-center gap-2">
-        <div class="w-2 h-2 rounded-full bg-orange-500"></div>
-        <span>Test task</span>
-      </div>
-      <div>
-        <span
-          class="px-3 py-1 rounded-full bg-red-50 text-red-600 text-sm"
-          >High</span
-        >
-      </div>
-      <div class="flex -space-x-2">
-        <div
-          class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white"
-        >
-          CA
-        </div>
-        <div
-          class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white"
-        >
-          JS
-        </div>
-        <div
-          class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white"
-        >
-          AJ
-        </div>
-        <div
-          class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white"
-        >
-          B
-        </div>
-      </div>
-      <div class="text-gray-500">10 months ago</div>
+      {% endcomment %}
     </div>
   </div>
-</div>
-{% endblock tasks %}
+{% endblock %}
