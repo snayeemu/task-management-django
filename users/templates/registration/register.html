@@ -1,13 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
 </head>
 <body>
-    <div class = "login">  
-  
+    <div class = "lg:max-w-[40%] mx-auto">  
         {% if messages %}  
             <ul>   
                 {% for message in messages %}  
@@ -16,11 +17,11 @@
             </ul>   
         {% endif %}  
           
-        <h1>Register Here </h1>  
+        <h1 class="text-3xl my-3">Register Here </h1>  
             {% if form.non_field_errors %}
                 <p>{{ form.non_field_errors }}</p>
             {% endif %}
-             <form method="post" >  
+             <form method="post" class="flex flex-col gap-3">  
                  {% csrf_token %}  
                  {% for field  in form  %}
                     <p>
@@ -35,7 +36,9 @@
                         {% endif %}
                     </p>
                  {% endfor %}
-                 <input type="submit" value="Submit">
+                 <div>
+                    <input class="px-2 py-1 bg-green-500 rounded" type="submit" value="Submit">
+                 </div>
              </form>  
     </div>  
 </body>

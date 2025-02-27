@@ -1,17 +1,27 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
 </head>
 <body>
-    <h1>Enter login credentials: </h1>
-    <form method="POST">
-        {% csrf_token %}
-        <input type="username" name="username" placeholder="Enter username">
-        <input type="password" name="password" placeholder="Enter password">
-        <input type="submit" placeholder="Submit">
-    </form>
+    <div class="lg:max-w-[40%] mx-auto">
+        <h1 class="text-3xl my-3">Enter login credentials: </h1>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="px-2 py-1 {% if message.tags == 'success' %}bg-green-500{% endif %} ">{{message}}</div>
+            {% endfor %}
+        {% endif %}
+        <form method="POST" class="flex flex-col gap-3">
+            {% csrf_token %}
+            {{form}}
+            <div>
+                <input class="px-2 py-1 bg-green-500 rounded" type="submit" placeholder="Submit">
+            </div>
+        </form>
+    </div>
 </body>
 </html>

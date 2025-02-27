@@ -23,10 +23,10 @@ class StyledFormMixin:
 
     def apply_styled_widgets(self):
         for field_name, field in self.fields.items():
-            if isinstance(field.widget, forms.TextInput):
+            if isinstance(field.widget, forms.TextInput) or isinstance(field.widget, forms.PasswordInput) or isinstance(field.widget, forms.EmailInput):
                 field.widget.attrs.update({
                     "class": self.default_classes,
-                    "placeholder": f"Enter {field.label.lower()}"
+                    "placeholder": f"Enter {field.label.lower() if field.label else ''}" 
                 })
             elif isinstance(field.widget, forms.Textarea):
                 field.widget.attrs.update({

@@ -1,8 +1,11 @@
-from django.contrib.auth.forms import UserCreationForm 
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm 
 from django.contrib.auth.models import User
 from django import forms
 from django.core.exceptions import ValidationError
 import re
+from tasks.forms import StyledFormMixin
+from django.utils.translation import gettext_lazy as _
+
 
 class RegisterForm(UserCreationForm):
     class Meta:
@@ -15,7 +18,7 @@ class RegisterForm(UserCreationForm):
         for key in self.fields:
             self.fields[key].help_text = "" 
 
-class CustomRegistrationForm(forms.ModelForm):
+class CustomRegistrationForm(StyledFormMixin, forms.ModelForm):
     password1 = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
     class Meta:
@@ -52,3 +55,13 @@ class CustomRegistrationForm(forms.ModelForm):
         if password1 != confirm_password:
             raise ValidationError("Confirm password do not match")
         return cleaned_data 
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_styled_widgets()
+        
+    
+class LoginForm(StyledFormMixin, AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_styled_widgets()
