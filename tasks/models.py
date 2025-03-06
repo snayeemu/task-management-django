@@ -33,6 +33,7 @@ class Tasks(models.Model):
 
 class TaskDetails(models.Model):
     task = models.OneToOneField(Tasks, on_delete=models.CASCADE, related_name="details")
+    asset = models.ImageField(upload_to="tasks_asset", default="tasks_asset/empty-image.jpg")
     high = "H"
     medium = "M"
     low = "L"
