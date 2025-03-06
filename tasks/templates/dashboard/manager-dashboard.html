@@ -19,11 +19,6 @@
             <div class="flex items-center gap-2">
               <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
               <a href="{% url "task-details" task.id %}">{{task.title}}</a>
-              <a href="{% url 'update-task' task.id %}" type="submit" class="p-1 rounded-full bg-green-600 text-white text-sm">Edit</a>
-              <form action="{% url "delete-task" task.id %}" method="POST">
-                  {% csrf_token %}
-                  <button type="submit" class="p-1 rounded-full bg-red-600 text-white text-sm">Delete</button>
-                </form>
             </div>
             <div>
               <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm">Normal</span>
@@ -47,11 +42,6 @@
             <div class="flex items-center gap-2">
               <div class="w-2 h-2 rounded-full bg-orange-500"></div>
               <a href="{% url "task-details" task.id %}">{{task.title}}</a>
-              <a href="{% url 'update-task' task.id %}" type="submit" class="p-1 rounded-full bg-green-600 text-white text-sm">Edit</a>
-              <form action="{% url "delete-task" task.id %}" method="POST">
-                  {% csrf_token %}
-                  <button type="submit" class="p-1 rounded-full bg-red-600 text-white text-sm">Delete</button>
-                </form>
             </div>
             <div>
               <span class="px-3 py-1 rounded-full bg-red-50 text-red-600 text-sm">High</span>
@@ -75,11 +65,6 @@
             <div class="flex items-center gap-2">
               <div class="w-2 h-2 rounded-full bg-green-500"></div>
               <a href="{% url "task-details" task.id %}">{{task.title}}</a>
-              <a href="{% url 'update-task' task.id %}" type="submit" class="p-1 rounded-full bg-green-600 text-white text-sm">Edit</a>
-              <form action="{% url "delete-task" task.id %}" method="POST">
-                  {% csrf_token %}
-                  <button type="submit" class="p-1 rounded-full bg-red-600 text-white text-sm">Delete</button>
-                </form>
             </div>
             <div>
               <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm">Low</span>

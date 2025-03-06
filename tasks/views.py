@@ -7,6 +7,7 @@ from tasks.models import Tasks, TaskDetails, Project
 from django.db.models import Q, Prefetch, Count
 import datetime
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+from users.views import is_admin
 
 
 def is_manager(user):
@@ -150,4 +151,20 @@ def view_tasks(request):
 
 def task_details(request, id):
     task = Tasks.objects.get(id=id)
-    return render(request, "task_details.html", {"task": task})
+    status_choices = task.STATUS_CHOICES
+    if request.method == "POST":
+        task.status = request.POST.get("task_status")
+        task.save()
+        return redirect("task-details", task.id)
+    return render(request, "task_details.html", {"task": task, "status_choices": status_choices})
+
+@login_required
+def dashboard(request):
+    if is_manager(request.user):
+        return redirect("manager-dashboard")
+    elif is_employee(request.user):
+        return redirect("employee-dashboard")
+    elif is_admin(request.user):
+        return redirect("admin-dashboard")
+    
+    return redirect("no-permission")

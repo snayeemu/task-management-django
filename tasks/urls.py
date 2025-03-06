@@ -7,6 +7,7 @@ from tasks.views import (
     update_task,
     task_details,
     delete_task,
+    dashboard
 )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     path("update-task/<int:id>/", update_task, name="update-task"),
     path("task/<int:id>/details/", task_details, name="task-details"),
     path("delete-task/<int:id>/", delete_task, name="delete-task"),
+    path("dashboard/", dashboard, name="dashboard")
 ]
