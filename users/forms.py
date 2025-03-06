@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group, Permission
 from django import forms
 from django.core.exceptions import ValidationError
 import re
@@ -65,3 +65,21 @@ class LoginForm(StyledFormMixin, AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.apply_styled_widgets()
+
+class AssignRoleForm(StyledFormMixin, forms.Form):
+    role = forms.ModelChoiceField(
+        queryset = Group.objects.all(),
+        empty_label="Select a Role"
+    )
+
+class CreateGroupForm(StyledFormMixin, forms.ModelForm):
+    permissions = forms.ModelMultipleChoiceField(
+        queryset=Permission.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="Assign Permission"
+    )
+
+    class Meta:
+        model = Group
+        fields = ["name", "permissions"]

@@ -5,9 +5,9 @@ from tasks.models import Tasks
 
 def sent_email(sender, instance, action, **kwargs):
     if action == "post_add":
-        emails = [emp.email for emp in instance.employees.all()]
+        emails = [emp.email for emp in instance.assigned_to.all()]
         send_mail(
-            "New Task Assigned",
+            "New Tasks Assigned",
             f"You have assigned to: {instance.title}",
             "snayeemu@gmail.com",
             emails,
@@ -15,4 +15,4 @@ def sent_email(sender, instance, action, **kwargs):
         )
 
 
-m2m_changed.connect(sent_email, sender=Tasks.employees.through)
+m2m_changed.connect(sent_email, sender=Tasks.assigned_to.through)

@@ -1,13 +1,6 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Form</title> 
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Create Task{% endblock title %}
+{% block content %}
   <div class="max-w-3xl mx-auto  mt-10">
     <div>
       {% if message %}
@@ -30,5 +23,4 @@
       <button class="bg-blue-700 px-4 py-2 hover:bg-slate-800 border-none hover:border hover:border-b-4 hover:border-green-800 duration-1000 rounded-md text-white mt-2 mb-5" type="submit">Submit</button> 
     </form>
   </div>
-</body>
-</html>
+{% endblock content %}

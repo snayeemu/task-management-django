@@ -1,17 +1,26 @@
 from django.shortcuts import render, redirect
-from tasks.forms import TaskForm, TaskModelForm, TaskDetailsModelForm
+from tasks.forms import TasksForm, TasksModelForm, TasksDetailsModelForm
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.http import HttpResponse
-from tasks.models import Employee, Tasks, TaskDetails, Project
+from tasks.models import Tasks, TaskDetails, Project
 from django.db.models import Q, Prefetch, Count
 import datetime
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 
+
+def is_manager(user):
+    return user.groups.filter(name="Manager").exists()
+
+def is_employee(user):
+    return user.groups.filter(name="Employee").exists()
 
 # Create your views here.
-def dashboard(request):
+@user_passes_test(is_manager, login_url="no-permission")
+def manager_dashboard(request):
     query = request.GET.get("type", "all")
     base_query = Tasks.objects.select_related("details").prefetch_related(
-        "employees"
+        "assigned_to"
     )
     tasks = None
     if query == "all":
@@ -32,24 +41,20 @@ def dashboard(request):
     context = {"tasks": tasks, "counts": counts}
     return render(request, "dashboard/manager-dashboard.html", context)
 
-
-def user_dashboard(request):
+@user_passes_test(is_employee, login_url="no-permission")
+def employee_dashboard(request):
     return render(request, "dashboard/user-dashboard.html")
 
-
-def test(request):
-    context = {"names": ["Nayeem", "Galib", "Sakib", "Affan"]}
-    return render(request, "test.html", context)
-
-
+@login_required
+@permission_required("tasks.add_tasks", login_url="no-permission")
 def create_task(request):
-    employees = Employee.objects.all() 
-    task_form = TaskModelForm() 
-    task_details_form = TaskDetailsModelForm() 
+    employees = User.objects.all() 
+    task_form = TasksModelForm() 
+    task_details_form = TasksDetailsModelForm() 
 
     if request.method == "POST":
-        task_form = TaskModelForm(request.POST)
-        task_details_form = TaskDetailsModelForm(request.POST)
+        task_form = TasksModelForm(request.POST)
+        task_details_form = TasksDetailsModelForm(request.POST)
         # print(form)
         if task_form.is_valid() and task_details_form.is_valid():
             """for django ModelForm data"""     
@@ -57,22 +62,23 @@ def create_task(request):
             task_details = task_details_form.save(commit=False)
             task_details.task = task
             task_details.save()
-            messages.success(request, "Task Created Successfully")
+            messages.success(request, "Tasks Created Successfully")
             return redirect("create-task")
 
     context = {"task_form": task_form, "task_details_form": task_details_form}
     return render(request, "task_form.html", context)
 
-
+@login_required
+@permission_required("tasks.change_tasks", login_url="no-permission")
 def update_task(request, id):
     task = Tasks.objects.get(id=id)
-    task_form = TaskModelForm(instance=task)
-    task_details_form = TaskDetailsModelForm(instance=task.taskdetails)
+    task_form = TasksModelForm(instance=task)
+    task_details_form = TasksDetailsModelForm(instance=task.details)
 
     if request.method == "POST":
-        task_form = TaskModelForm(request.POST, instance=task)
-        task_details_form = TaskDetailsModelForm(
-            request.POST, instance=task.taskdetails
+        task_form = TasksModelForm(request.POST, instance=task)
+        task_details_form = TasksDetailsModelForm(
+            request.POST, instance=task.details
         )
         # print(form)
         if task_form.is_valid() and task_details_form.is_valid():
@@ -81,24 +87,26 @@ def update_task(request, id):
             task_details = task_details_form.save(commit=False)
             task_details.task = task
             task_details.save()
-            messages.success(request, "Task Updated Successfully")
+            messages.success(request, "Tasks Updated Successfully")
             return redirect("update-task", id)
 
     context = {"task_form": task_form, "task_details_form": task_details_form}
     return render(request, "task_form.html", context)
 
-
+@login_required
+@permission_required("tasks.delete_tasks", login_url="no-permission")
 def delete_task(request, id): 
     if request.method == "POST": 
         task = Tasks.objects.get(id=id)
         task.delete()
-        messages.success(request, "Task Deleted Successfully")
+        messages.success(request, "Tasks Deleted Successfully")
         return redirect("manager-dashboard")
     else:
         messages.error(request, "Something wrong")
         return redirect("manager-dashboard")
 
-
+@login_required
+@permission_required("tasks.view_tasks", login_url="no-permission")
 def view_tasks(request):
     # # show pending tasks
     # tasks = Tasks.objects.filter(status="PENDING")
@@ -116,7 +124,7 @@ def view_tasks(request):
     # tasks = Tasks.objects.filter(due_date=datetime.date.today())
 
     # Exclude low priority tasks
-    # tasks = TaskDetails.objects.exclude(priority="L")
+    # tasks = TasksDetails.objects.exclude(priority="L")
 
     # show the task that contain the word 'th' and status is pending
     # tasks = Tasks.objects.filter(title__icontains = "Th", status="PENDING")
@@ -139,3 +147,7 @@ def view_tasks(request):
         "show_tasks.html",
         {"projects": projects},
     )
+
+def task_details(request, id):
+    task = Tasks.objects.get(id=id)
+    return render(request, "task_details.html", {"task": task})
